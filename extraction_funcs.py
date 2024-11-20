@@ -1,49 +1,53 @@
-def seprate_name_from_subscrit(formula):
-    length_of_formula = len(formula)
-    L_formula_ints = []
-    L_formula_strings = []
+def extract_reactants(reaction):
+    elem_dict = dict()
+    elem_list = []
+    list_of_ints = []
 
-    for i in range(length_of_formula):
+    for i in range(len(reaction)):
+
         try:
-            L_formula_ints.append(int(formula[i]))
+            int(reaction[i])
+            list_of_ints.append(reaction[i])
         except ValueError:
-            L_formula_strings.append(formula[i])
-    return L_formula_strings, L_formula_ints
+            if reaction[i].isupper():
+                if reaction[i+1].islower():
+                    elem_list.append(reaction[i] + reaction[i+1])
+                else:
+                    elem_list.append(reaction[i])
+                if list_of_ints != []:
+                    list_of_ints.append("")
 
-def extract_elem_subscript(L_formula_ints):
-    length_of_formula = len(L_formula_ints)
+    print(elem_list)
+    print(list_of_ints)
+    uniq = []
 
-    if length_of_formula > 2:
-        L_formula_ints = L_formula_ints[0]
-    elif L_formula_ints == []:
-        subscript_of_elem = 1
-        return subscript_of_elem
-    else:
-        subscrit_of_elem = 0
-        power = length_of_formula - 1 
-        for i in range(length_of_formula):
-            subscrit_of_elem += L_formula_ints[i]*(10**power)
-            power -= 1
-    return subscrit_of_elem
+    int_length = len(list_of_ints)
+    elem_length = len(elem_list)
 
-def extract_elem_name(L_formula_strings):
-    length_of_formula = len(L_formula_strings)
+    if int_length != elem_length:
+        i = 0
+        while i < int_length:
+            if list_of_ints[i] != "":
+                k = list_of_ints[i]
+            if i+1 < int_length and list_of_ints[i+1] != "":
+                for j in range(i+1, int_length):
+                    if list_of_ints[j] == "":
+                        break
+                    else:
+                        k += list_of_ints[j]
+            if i + 1 < int_length:
+                try:
+                    i = j  
+                except NameError:
+                    i = i + 1
+            i += 1
+            uniq.append(k)
+    print(uniq)
 
-    if length_of_formula > 2:
-        elem_name = L_formula_strings[0]
-    else:
-        elem_name = ""
-        for i in range(length_of_formula):
-            elem_name += L_formula_strings[i]
-    return elem_name
+    for i in range(elem_length):
+        try:
+            elem_dict[elem_list[i]] = int(uniq[i])
+        except IndexError:
+            elem_dict[elem_list[i]] = 1
 
-formula_right = input()
-
-strL, intL = seprate_name_from_subscrit(formula_right)
-
-elem_name = extract_elem_name(strL)
-subscript_of_elem = extract_elem_subscript(intL)
-
-
-print(elem_name)
-print(subscript_of_elem)
+    print(elem_dict)
